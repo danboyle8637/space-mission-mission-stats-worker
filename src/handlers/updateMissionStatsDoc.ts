@@ -18,10 +18,14 @@ export async function updateMissionStats(
   try {
     const missionStats = new MissionStats(env);
 
-    await missionStats.updateMissionStats(userId, missionId, goal);
+    const updatedMissionStats = await missionStats.updateMissionStats(
+      userId,
+      missionId,
+      goal
+    );
 
     const response = new Response(
-      JSON.stringify("Mission Stats Doc updated successfully"),
+      JSON.stringify(JSON.stringify(updatedMissionStats)),
       {
         status: 200,
       }

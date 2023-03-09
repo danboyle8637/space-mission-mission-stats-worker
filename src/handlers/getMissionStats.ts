@@ -18,12 +18,12 @@ export async function getMissionStats(
   try {
     const missionStats = new MissionStats(env);
 
-    const missionStatsDoc = await missionStats.getMissionStats(
+    const currentMissionStats = await missionStats.getMissionStats(
       userId,
       missionId
     );
 
-    const response = new Response(JSON.stringify(missionStatsDoc), {
+    const response = new Response(JSON.stringify(currentMissionStats), {
       status: 200,
     });
     return response;

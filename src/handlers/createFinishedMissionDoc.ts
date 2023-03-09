@@ -18,14 +18,14 @@ export async function createFinishedMissionDoc(
   try {
     const missionStats = new MissionStats(env);
 
-    await missionStats.createFinishedMissionDoc(userId, missionId);
-
-    const response = new Response(
-      JSON.stringify("Finished Mission Doc created successfully"),
-      {
-        status: 200,
-      }
+    const finishedMission = await missionStats.createFinishedMissionDoc(
+      userId,
+      missionId
     );
+
+    const response = new Response(finishedMission, {
+      status: 200,
+    });
     return response;
   } catch (error) {
     const response = new Response(getErrorMessage(error), { status: 500 });

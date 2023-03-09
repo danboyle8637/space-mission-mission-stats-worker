@@ -1,6 +1,7 @@
 export interface Env {
   SUPA_DB_URL: string;
   SUPA_DB_KEY: string;
+  NEON_DATABASE: string;
 }
 
 export type Actions =
