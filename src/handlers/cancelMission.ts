@@ -1,16 +1,16 @@
 import { MissionStats } from "../MissionStats";
 import { getErrorMessage } from "../helpers/worker";
-import type { Env, GetMissionStatsBody } from "../types";
+import type { Env, CancelMissionBody, MissionId } from "../types";
 
-export async function getMissionStats(
+export async function cancelMission(
   request: Request,
   env: Env
 ): Promise<Response> {
   const formattedReq = new Response(request.body);
-  const body: GetMissionStatsBody = await formattedReq.json();
-  const { userId, missionId, status } = body;
+  const body: CancelMissionBody = await formattedReq.json();
+  const { userId, missionId } = body;
 
-  if (!userId || !missionId || !status) {
+  if (!userId || !missionId) {
     const response = new Response("Bad Request", { status: 400 });
     return response;
   }
@@ -18,13 +18,12 @@ export async function getMissionStats(
   try {
     const missionStats = new MissionStats(env);
 
-    const currentMissionStats = await missionStats.getMissionStats(
+    const cancelMission = await missionStats.cancelMission(
       userId,
-      missionId,
-      status
+      missionId as MissionId
     );
 
-    const response = new Response(JSON.stringify(currentMissionStats), {
+    const response = new Response(JSON.stringify(cancelMission), {
       status: 200,
     });
     return response;

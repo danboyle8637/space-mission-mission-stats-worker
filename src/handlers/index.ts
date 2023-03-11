@@ -1,11 +1,11 @@
-import { createFinishedMissionDoc } from "./createFinishedMissionDoc";
 import { createMissionStats } from "./createMissionStatsDoc";
 import { getMissionStats } from "./getMissionStats";
 import { updateMissionStats } from "./updateMissionStatsDoc";
+import { getAllMissionStats } from "./getAllMissionStats";
 
 export {
-  createFinishedMissionDoc,
   createMissionStats,
   getMissionStats,
   updateMissionStats,
+  getAllMissionStats,
 };

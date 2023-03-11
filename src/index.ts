@@ -1,8 +1,8 @@
 import {
-  createFinishedMissionDoc,
   createMissionStats,
   getMissionStats,
   updateMissionStats,
+  getAllMissionStats,
 } from "./handlers";
 import type { Env, Actions } from "./types";
 
@@ -17,13 +17,6 @@ export default {
       (url.pathname.split("/").pop() as Actions) || "";
 
     switch (workerAction) {
-      case "create-finished-mission-doc": {
-        if (request.method !== "POST") {
-          return new Response("Bad Request", { status: 405 });
-        }
-
-        return createFinishedMissionDoc(request, env);
-      }
       case "create-mission-stats": {
         if (request.method !== "POST") {
           return new Response("Bad Request", { status: 405 });
@@ -38,6 +31,13 @@ export default {
 
         return getMissionStats(request, env);
       }
+      case "get-all-mission-stats": {
+        if (request.method !== "POST") {
+          return new Response("Bad Request", { status: 405 });
+        }
+
+        return getAllMissionStats(request, env);
+      }
       case "update-mission-stats": {
         if (request.method !== "PATCH") {
           return new Response("Bad Request", { status: 405 });
@@ -45,12 +45,14 @@ export default {
 
         return updateMissionStats(request, env);
       }
-      case "finish-mission-stats": {
+      case "get-finished-missions": {
         if (request.method !== "PATCH") {
           return new Response("Bad Request", { status: 405 });
         }
 
-        return createFinishedMissionDoc(request, env);
+        return new Response("Hello");
+      }
+      case "cancel-mission": {
       }
       default: {
         return new Response("Bad Request", { status: 400 });

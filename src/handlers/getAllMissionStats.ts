@@ -1,16 +1,16 @@
 import { MissionStats } from "../MissionStats";
 import { getErrorMessage } from "../helpers/worker";
-import type { Env, CreateFinishedMissionBody } from "../types";
+import type { Env, GetAllMissionStatsBody } from "../types";
 
-export async function createFinishedMissionDoc(
+export async function getAllMissionStats(
   request: Request,
   env: Env
 ): Promise<Response> {
   const formattedReq = new Response(request.body);
-  const body: CreateFinishedMissionBody = await formattedReq.json();
-  const { userId, missionId } = body;
+  const body: GetAllMissionStatsBody = await formattedReq.json();
+  const { userId } = body;
 
-  if (!userId || !missionId) {
+  if (!userId) {
     const response = new Response("Bad Request", { status: 400 });
     return response;
   }
@@ -18,12 +18,9 @@ export async function createFinishedMissionDoc(
   try {
     const missionStats = new MissionStats(env);
 
-    const finishedMission = await missionStats.createFinishedMissionDoc(
-      userId,
-      missionId
-    );
+    const allMissionStats = await missionStats.getAllMissionStats(userId);
 
-    const response = new Response(finishedMission, {
+    const response = new Response(JSON.stringify(allMissionStats), {
       status: 200,
     });
     return response;

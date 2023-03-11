@@ -2,18 +2,22 @@ export interface Env {
   SUPA_DB_URL: string;
   SUPA_DB_KEY: string;
   NEON_DATABASE: string;
+  PLANETSCALE_HOST: string;
+  PLANETSCALE_USERNAME: string;
+  PLANETSCALE_PASSWORD: string;
 }
 
 export type Actions =
   | "create-mission-stats"
   | "get-mission-stats"
   | "update-mission-stats"
-  | "finish-mission-stats"
-  | "create-finished-mission-doc";
+  | "cancel-mission"
+  | "get-finished-missions"
+  | "get-all-mission-stats";
 
 export type MissionId = "mars" | "titan" | "pleiades" | "prodigious" | "x24c89";
 
-export type StatsStatus = "active" | "complete" | null;
+export type StatsStatus = "active" | "complete" | "cancelled" | null;
 
 export type Goal = "goal1" | "goal2" | "goal3";
 
@@ -34,9 +38,14 @@ export interface CreateMissionStatsBody {
   missionId: MissionId;
 }
 
+export interface GetAllMissionStatsBody {
+  userId: string;
+}
+
 export interface GetMissionStatsBody {
   userId: string;
   missionId: MissionId;
+  status: StatsStatus;
 }
 
 export interface UpdateMissionStatsBody {
@@ -48,6 +57,11 @@ export interface UpdateMissionStatsBody {
 export interface FinishMissionBody {
   userId: string;
   missionId: MissionId;
+}
+
+export interface CancelMissionBody {
+  userId: string;
+  missionId: string;
 }
 
 export interface CreateFinishedMissionBody {
