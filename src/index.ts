@@ -3,6 +3,8 @@ import {
   getMissionStats,
   updateMissionStats,
   getAllMissionStats,
+  getFinishedMissions,
+  cancelMission,
 } from "./handlers";
 import type { Env, Actions } from "./types";
 
@@ -32,7 +34,7 @@ export default {
         return getMissionStats(request, env);
       }
       case "get-all-mission-stats": {
-        if (request.method !== "POST") {
+        if (request.method !== "GET") {
           return new Response("Bad Request", { status: 405 });
         }
 
@@ -46,13 +48,18 @@ export default {
         return updateMissionStats(request, env);
       }
       case "get-finished-missions": {
-        if (request.method !== "PATCH") {
+        if (request.method !== "GET") {
           return new Response("Bad Request", { status: 405 });
         }
 
-        return new Response("Hello");
+        return getFinishedMissions(request, env);
       }
       case "cancel-mission": {
+        if (request.method !== "POST") {
+          return new Response("Bad Request", { status: 405 });
+        }
+
+        return cancelMission(request, env);
       }
       default: {
         return new Response("Bad Request", { status: 400 });

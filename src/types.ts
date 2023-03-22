@@ -24,6 +24,7 @@ export type Goal = "goal1" | "goal2" | "goal3";
 export interface MissionStatsDoc {
   id: number;
   created_at: string;
+  modified_at: string;
   user_id: string;
   mission_id: MissionId;
   is_goal1_complete: boolean;
@@ -33,39 +34,35 @@ export interface MissionStatsDoc {
   finished_date: string;
 }
 
+export interface FinishedMission {
+  created_at: string;
+  call_sign: string;
+  mission_id: string;
+}
+
 export interface CreateMissionStatsBody {
-  userId: string;
   missionId: MissionId;
 }
 
-export interface GetAllMissionStatsBody {
-  userId: string;
-}
-
 export interface GetMissionStatsBody {
-  userId: string;
   missionId: MissionId;
   status: StatsStatus;
 }
 
 export interface UpdateMissionStatsBody {
-  userId: string;
   missionId: MissionId;
   goal: Goal;
 }
 
 export interface FinishMissionBody {
-  userId: string;
   missionId: MissionId;
 }
 
 export interface CancelMissionBody {
-  userId: string;
   missionId: string;
 }
 
 export interface CreateFinishedMissionBody {
-  userId: string;
   missionId: MissionId;
 }
 

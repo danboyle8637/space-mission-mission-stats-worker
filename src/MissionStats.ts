@@ -15,16 +15,17 @@ export class MissionStats {
     };
   }
 
-  async getAllMissionStats(user_id: string) {
+  async getAllMissionStats(userId: string) {
     const ps: Connection = await connect(this.config);
 
     const allMissionStatsQuery = `
-      SELECT created_at, mission_id, is_goal1_complete, is_goal2_complete, is_goal3_complete, status FROM mission_stats
+      SELECT created_at, mission_id, is_goal1_complete, is_goal2_complete, is_goal3_complete, status 
+      FROM mission_stats
       WHERE user_id = :userId;
     `;
 
     const allMissionStatsParams = {
-      user_id: user_id,
+      userId: userId,
     };
 
     const allMissionStats = await ps.execute(
@@ -60,7 +61,7 @@ export class MissionStats {
       return "No mission stats";
     }
 
-    return missionStats.rows;
+    return missionStats.rows[0];
   }
 
   async createMissionDoc(userId: string, missionId: MissionId) {
@@ -91,14 +92,14 @@ export class MissionStats {
           case "goal1": {
             return `
               UPDATE mission_stats
-              SET is_goal1_complete = true
+              SET is_goal1_complete = true, modified_at = NOW()
               WHERE user_id = :userId AND mission_id = :missionId AND status = 'active';
             `;
           }
           case "goal2": {
             return `
               UPDATE mission_stats
-              SET is_goal2_complete = true
+              SET is_goal2_complete = true, modified_at = NOW()
               WHERE user_id = :userId AND mission_id = :missionId AND status = 'active';
             `;
           }
@@ -122,6 +123,7 @@ export class MissionStats {
       UPDATE mission_stats
       SET
         is_goal3_complete = true,
+        modified_at = NOW(),
         status = 'finished'
       WHERE user_id = :userId AND mission_id = :missionId AND status = 'active';
     `;
@@ -165,8 +167,42 @@ export class MissionStats {
       missionId: missionId,
     };
 
-    await ps.execute(cancelQuery, cancelParams);
+    const updateUserQuery = `
+      UPDATE users
+      SET active_mission_id = null
+      WHERE user_id = :userId
+    `;
+
+    const updateUserParams = {
+      userId: userId,
+    };
+
+    await ps.transaction(async (tx) => {
+      await tx.execute(cancelQuery, cancelParams);
+      await tx.execute(updateUserQuery, updateUserParams);
+    });
 
     return "Mission cancelled";
+  }
+
+  async getAllFinishedMissions(userId: string) {
+    const ps: Connection = await connect(this.config);
+
+    const finishedMissionsQuery = `
+      SELECT 'created_at', call_sign, mission_id 
+      FROM finished_missions fm JOIN users u on fm.user_id = u.user_id
+      WHERE u.user_id = :userId;
+    `;
+
+    const finishedMissionsParams = {
+      userId: userId,
+    };
+
+    const finishedMissions = await ps.execute(
+      finishedMissionsQuery,
+      finishedMissionsParams
+    );
+
+    return finishedMissions.rows;
   }
 }

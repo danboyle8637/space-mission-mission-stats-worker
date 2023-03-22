@@ -1,14 +1,17 @@
 import { MissionStats } from "../MissionStats";
-import { getErrorMessage } from "../helpers/worker";
+import { getErrorMessage, USERID_HEADER } from "../helpers/worker";
 import type { Env, UpdateMissionStatsBody } from "../types";
 
 export async function updateMissionStats(
   request: Request,
   env: Env
 ): Promise<Response> {
+  const headers = request.headers;
+  const userId = headers.get(USERID_HEADER);
+
   const formattedReq = new Response(request.body);
   const body: UpdateMissionStatsBody = await formattedReq.json();
-  const { userId, missionId, goal } = body;
+  const { missionId, goal } = body;
 
   if (!userId || !missionId || !goal) {
     const response = new Response("Bad Request", { status: 400 });
@@ -24,12 +27,9 @@ export async function updateMissionStats(
       goal
     );
 
-    const response = new Response(
-      JSON.stringify(JSON.stringify(updatedMissionStats)),
-      {
-        status: 200,
-      }
-    );
+    const response = new Response(JSON.stringify(updatedMissionStats), {
+      status: 200,
+    });
     return response;
   } catch (error) {
     const response = new Response(getErrorMessage(error), { status: 500 });

@@ -1,14 +1,17 @@
 import { MissionStats } from "../MissionStats";
-import { getErrorMessage } from "../helpers/worker";
+import { getErrorMessage, USERID_HEADER } from "../helpers/worker";
 import type { Env, CancelMissionBody, MissionId } from "../types";
 
 export async function cancelMission(
   request: Request,
   env: Env
 ): Promise<Response> {
+  const headers = request.headers;
+  const userId = headers.get(USERID_HEADER);
+
   const formattedReq = new Response(request.body);
   const body: CancelMissionBody = await formattedReq.json();
-  const { userId, missionId } = body;
+  const { missionId } = body;
 
   if (!userId || !missionId) {
     const response = new Response("Bad Request", { status: 400 });
@@ -23,7 +26,7 @@ export async function cancelMission(
       missionId as MissionId
     );
 
-    const response = new Response(JSON.stringify(cancelMission), {
+    const response = new Response(cancelMission, {
       status: 200,
     });
     return response;

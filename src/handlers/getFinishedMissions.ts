@@ -1,8 +1,8 @@
 import { MissionStats } from "../MissionStats";
 import { getErrorMessage, USERID_HEADER } from "../helpers/worker";
-import type { Env } from "../types";
+import type { Env, FinishedMission } from "../types";
 
-export async function getAllMissionStats(
+export async function getFinishedMissions(
   request: Request,
   env: Env
 ): Promise<Response> {
@@ -15,16 +15,14 @@ export async function getAllMissionStats(
   }
 
   try {
-    const missionStats = new MissionStats(env);
+    const missionStats = new MissionStats(env).getAllFinishedMissions;
 
-    const allMissionStats = await missionStats.getAllMissionStats(userId);
-
-    const response = new Response(JSON.stringify(allMissionStats), {
+    const response = new Response(JSON.stringify(missionStats), {
       status: 200,
     });
     return response;
   } catch (error) {
-    const response = new Response(getErrorMessage(error), { status: 500 });
+    const response = new Response(getErrorMessage(error), { status: 200 });
     return response;
   }
 }

@@ -1,3 +1,6 @@
 name = "mission-stats-worker"
 main = "src/index.ts"
 compatibility_date = "2023-02-27"
+
+[dev]
+port = 8060
