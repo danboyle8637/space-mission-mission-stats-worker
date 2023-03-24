@@ -144,9 +144,20 @@ export class MissionStats {
       missionId: missionId,
     };
 
+    const updateUserQuery = `
+      UPDATE users
+      SET active_mission_id = null
+      WHERE user_id = :userId
+    `;
+
+    const updateUserParams = {
+      userId: userId,
+    };
+
     await ps.transaction(async (tx) => {
       await tx.execute(finishStatsQuery, finishStatsParams);
       await tx.execute(createFinishedMissionQuery, createFinishedMissionParams);
+      await tx.execute(updateUserQuery, updateUserParams);
       return;
     });
 
